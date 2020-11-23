@@ -7,29 +7,28 @@
 <title>Experiment</title>
 
 <style type="text/css">
-	body { font-family: monospace; }	
+	body { font-family: monospace; }
 </style>
-
 
 </head>
 
-
 <body>
 
-
 <div id="weather"></div>
-
+<hr>
+<hr>
+<div id="forecast"></div>
 <div> 
 	<small><a target='_blank' href='https://api.openweathermap.org'>openweathermap.org</a></small> 
 </div>
 
-
 <script>
-
+  
 /* 
 	https://api.openweathermap.org
 */
 	
+
 function unixToHHMMSS(unixTS) { 
 	return new Date(unixTS*1000).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
 }
@@ -45,7 +44,7 @@ function getIcon(x) {
 /*
 	https://openweathermap.org/api/weather-call-api
 */
-function getWeather(location) {
+function getWeather(location, callBack) {
 	var API_KEY       = '081dd463b40fb90f333a233324528a78';	
 	var weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
 
@@ -57,22 +56,66 @@ function getWeather(location) {
 		if (xmlhttp.readyState == 4) {
 			if(xmlhttp.status == 200) {
 				var weather = JSON.parse(xmlhttp.responseText);								
-				console.log(weather);				
+				console.log(weather);
 
-				// Parse weather data
 				let weatherForHuman = `${weather.name} (${weather.sys.country}) (${weather.coord.lat},${weather.coord.lon}) At ${unixToIso(weather.dt)}<br>`;
 				weatherForHuman += `Sun ${unixToHHMMSS(weather.sys.sunrise)}↑ ${unixToHHMMSS(weather.sys.sunset)}↓<br>`;				
 				weatherForHuman += `Temp <strong>${weather.main.temp}°C (Feel ${weather.main.feels_like}°C)</strong> [${weather.main.temp_min}…${weather.main.temp_min}]°C<br>`;
 				weatherForHuman += `Wind ${weather.wind.deg}°@${Math.floor(weather.wind.speed*3600/1852)} Kt  ${weather.main.pressure} hPa / Humidity ${weather.main.humidity}% <br>`;
 				weatherForHuman += `Visibility ${weather.visibility} m<br>`;
 				weather.weather.map(w => weatherForHuman += `${w.description} <img src="${getIcon(w.icon)}"}>`);
-
-				 document.getElementById("weather").innerHTML = weatherForHuman;
+				
+				callBack(weatherForHuman);
 			} 
 		}
 	};
 	xmlhttp.send(null);
 }
+
+/*
+	https://openweathermap.org/forecast5
+*/
+function getWeatherForecast5days(location, maxDays, callBack) {
+	var API_KEY       = '081dd463b40fb90f333a233324528a78';	
+	var weatherApiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric&cnt=${maxDays}`;
+
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open('GET', weatherApiUrl, true);    
+	xmlhttp.withCredentials = false;
+
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			if(xmlhttp.status == 200) {
+				var w = JSON.parse(xmlhttp.responseText);								
+				console.log(w);
+				
+				let s = `${w.city.name} (${w.city.country}) (${w.city.coord.lat},${w.city.coord.lon})<br>`;
+				s += `Sun ${unixToHHMMSS(w.city.sunrise)}↑ ${unixToHHMMSS(w.city.sunset)}↓<br>`;				
+
+				w.list.map( wl => {
+					s += `<br>★${unixToIso(wl.dt)}<br>`;
+					s += `Temp <strong>${wl.main.temp}°C (Feel ${wl.main.feels_like}°C)</strong> [${wl.main.temp_min}…${wl.main.temp_min}]°C<br>`;
+					s += `Wind ${wl.wind.deg}°@${Math.floor(wl.wind.speed*3600/1852)} Kt  ${wl.main.pressure} hPa / Humidity ${wl.main.humidity}% <br>`;
+	
+					wl.weather.map(wt => s += `${wt.description} <img src="${getIcon(wt.icon)}"}>`);
+					s += `Visibility ${wl.visibility} m<br>`;
+				});
+
+				callBack(s);
+			} 
+		}
+	};
+	xmlhttp.send(null);
+}
+
+function display(data, targetId) {
+	var target = document.getElementById(targetId);
+	target.innerHTML = data;
+}
+
+function displayWeather(data) { display(data, "weather"); }
+function displayForecast(data) { display(data, "forecast"); }
+	
 
 function geolocWeather() {
 		
@@ -82,24 +125,30 @@ function geolocWeather() {
 		To use this feature, you should consider switching your application to a secure origin, 
 		such as HTTPS. 	See https://goo.gl/rStTGz*/
 
+
+
 	let data = {"lat": 48.89, "lon": 2.07};	
-	if('geolocation' in navigator) {
+	if(false && 'geolocation' in navigator) {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			data.lat = position.coords.latitude;
-			data.lon = position.coords.longitude;					
-			getWeather(data);
+			data.lon = position.coords.longitude;		
+			displayWeather("");
+			displayForecast("");
+			getWeather(data, displayWeather);
+			getWeatherForecast5days(data, 5, displayForecast); // forecast for 2 days		
 	   });
     }
     else
-    {    	
-		getWeather(data);		
+    {
+    	displayWeather("");
+		displayForecast("");
+		getWeather(data, displayWeather);
+		getWeatherForecast5days(data, 5, displayForecast); // forecast for 2 days		
 	}
 
 }
 
 geolocWeather();
-
-
 
 
 </script>
