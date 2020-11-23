@@ -30,6 +30,17 @@
 	https://api.openweathermap.org
 */
 	
+function unixToHHMMSS(unixTS) { 
+	return new Date(unixTS*1000).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+}
+
+function unixToIso(unixTS) { 
+	return new Date(unixTS*1000).toLocaleString().replace(" à", "");
+}
+
+function getIcon(x) {
+	return `https://openweathermap.org/img/wn/${x}@2x.png`;
+}
 
 /*
 	https://openweathermap.org/api/weather-call-api
@@ -47,6 +58,16 @@ function getWeather(location) {
 			if(xmlhttp.status == 200) {
 				var weather = JSON.parse(xmlhttp.responseText);								
 				console.log(weather);				
+
+				// Parse weather data
+				let weatherForHuman = `${weather.name} (${weather.sys.country}) (${weather.coord.lat},${weather.coord.lon}) At ${unixToIso(weather.dt)}<br>`;
+				weatherForHuman += `Sun ${unixToHHMMSS(weather.sys.sunrise)}↑ ${unixToHHMMSS(weather.sys.sunset)}↓<br>`;				
+				weatherForHuman += `Temp <strong>${weather.main.temp}°C (Feel ${weather.main.feels_like}°C)</strong> [${weather.main.temp_min}…${weather.main.temp_min}]°C<br>`;
+				weatherForHuman += `Wind ${weather.wind.deg}°@${Math.floor(weather.wind.speed*3600/1852)} Kt  ${weather.main.pressure} hPa / Humidity ${weather.main.humidity}% <br>`;
+				weatherForHuman += `Visibility ${weather.visibility} m<br>`;
+				weather.weather.map(w => weatherForHuman += `${w.description} <img src="${getIcon(w.icon)}"}>`);
+
+				 document.getElementById("weather").innerHTML = weatherForHuman;
 			} 
 		}
 	};
