@@ -7,6 +7,7 @@
 <title>Experiment</title>
 
 <style type="text/css">
+	body { font-family: monospace; }	
 </style>
 
 
@@ -15,8 +16,71 @@
 
 <body>
 
+
+<div id="weather"></div>
+
+<div> 
+	<small><a target='_blank' href='https://api.openweathermap.org'>openweathermap.org</a></small> 
+</div>
+
+
 <script>
-  
+
+/* 
+	https://api.openweathermap.org
+*/
+	
+
+/*
+	https://openweathermap.org/api/weather-call-api
+*/
+function getWeather(location) {
+	var API_KEY       = '081dd463b40fb90f333a233324528a78';	
+	var weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
+
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open('GET', weatherApiUrl, true);    
+	xmlhttp.withCredentials = false;
+
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			if(xmlhttp.status == 200) {
+				var weather = JSON.parse(xmlhttp.responseText);								
+				console.log(weather);				
+			} 
+		}
+	};
+	xmlhttp.send(null);
+}
+
+function geolocWeather() {
+		
+	/*
+	[Deprecation] getCurrentPosition() and watchPosition() 
+		no longer work on insecure origins. 
+		To use this feature, you should consider switching your application to a secure origin, 
+		such as HTTPS. 	See https://goo.gl/rStTGz*/
+
+	let data = {"lat": 48.89, "lon": 2.07};	
+	if('geolocation' in navigator) {
+		navigator.geolocation.getCurrentPosition(function(position) {
+			data.lat = position.coords.latitude;
+			data.lon = position.coords.longitude;					
+			getWeather(data);
+	   });
+    }
+    else
+    {    	
+		getWeather(data);		
+	}
+
+}
+
+geolocWeather();
+
+
+
+
 </script>
 
 </body>
