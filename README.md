@@ -5,7 +5,7 @@ You're free to use (I create it for my browser's homepage).
 
 ![app's screenshoot](app.png)
 
-# Configuration
+# How to configure
 - Register to https://api.openweathermap.org  
 - Get an APi key and inject it into index.html (development api key is no more valid):
 
@@ -17,6 +17,10 @@ const config = {
 	maxForecasts:5								// Max is 5 (openweathermap free plan) 
 };
 ```
+
+# How to use
+>Open index.html
+
 # Data provider
 - https://api.openweathermap.org
 
