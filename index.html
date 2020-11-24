@@ -9,24 +9,34 @@
 <style type="text/css">
 
 	:root {
-		--highColor:#fdde00
+		--highColor: #fdde00;
+		--windColor: #4ceeff;			
 	}
 
 	body { 
 		font-family: cursive; 
 	}
 
-	.relative, .weatherContent, .tempFeel, .weatherCurrentDescription, .wind {
+	.alignCenter {
+		text-align: center;
+	}
+
+	.alignRight {
+		text-align: right;			
+	}
+
+	.relative, .weatherContent, .tempFeel, .weatherCurrentDescription, .wind, .forecastItem {
 		position: relative;
 	}
 
-	.absolute, .dayPos, .weatherContentBackimg, .iconCurrentWeather, .windir { 
+	.absolute, .dayPos, .weatherContentBackimg, .iconCurrentWeather, .windir,
+	.windirForecast, .iconForecastWeather, .dtTime { 
 		position: absolute;
 	}
 
 	.weatherWidget {
-		background: repeating-linear-gradient(169deg, #000000, #bbbed2);
-		width: 50%;					
+		background: repeating-linear-gradient(62deg, #000000, #bbbed2);
+		width: 60%;					
 		border:solid 2px;
 		border-radius: 25px;
 	}
@@ -53,8 +63,7 @@
 	.locality { 
 		font-size: 1.8em;
 		color: white;
-		font-family: fantasy;
-		text-align: right;
+		font-family: fantasy;		
 	}
 	.country {
 		font-size: 0.4em;		
@@ -62,15 +71,14 @@
 		
 	.localityInfos {
 		font-size: 0.8em;		
-		color: white;	
-		text-align: right;			
+		color: white;			
 	}
 	
 	.dayPos {
 		grid-column: 1/5;		
 	}
 
-	.dt, .wind, .sun {
+	.dt, .dtTime, .wind, .sun {
 		color: var(--highColor);	
 		font-size: 1.2em;
 	}
@@ -84,8 +92,7 @@
 		display: grid;
 		grid-template-columns: 0.1fr 0.8fr;
 		grid-template-rows: repeat(3, 2em);
-		grid-gap: 2px;
-    	text-align: center;				
+		grid-gap: 2px;	
 	}
 
 	.temperatureGridPos {
@@ -115,7 +122,6 @@
 	.tempFeel {		
 		font-weight:100;
 		color: var(--highColor);				
-		text-align: right;
 		grid-row: 1;
 		grid-column: 2;		
     	top: -10px;
@@ -126,20 +132,17 @@
 		grid-column: 1/6;
 		font-style: italic;
 		color: white;			
-		text-align: center;
 	}
 	.iconCurrentWeather {	    
-	    top: 16px;	
-	    left: -34px;
-	    background-color: var(--highColor);	    
-	    border-radius: 50%;
-	    transform: scale(0.65);
+	    top: 15%;
+	    left: 40%;    	    
+	    transform: scale(3);
 	}
 	
 	.wind {  		
 		top:50px;
 		left:30px;
-		color: #4ceeff;		
+		color: var(--windColor);		
 	}
 
 	.windir {		
@@ -147,11 +150,73 @@
 	    top: 1.2em;
     	left: 4px;	
 	}
+
+	.forecast {
+		grid-row: 3;
+		grid-column: 1/6;		
+		display: flex;
+		flex-flow: row;		
+	}
+
+	.forecastItem {
+		background: repeating-linear-gradient(169deg, #000000, #bbbed2);		
+		border:solid 1px grey;
+		border-radius: 8px;
+		padding: 8px;	
+	}
+
+	.dtTime {
+		font-size: 0.8em;
+    	left: 77px;
+	}
+
+	.iconForecastWeather {
+		transform: scale(0.5);
+    	left: 13px;
+    	top: 8px;
+	}
+
+	.weatherForecastDescription {	
+		font-style: italic;
+		color: white;			
+	}
+
+	.tempForecast {
+		font-size: 0.7em;
+	}
+	.windForecast {
+		top:50px;
+		left:30px;
+		color: var(--windColor);		
+	}
+
+	.windirForecast {		
+		display: inline-block;	
+	    top: 30px;
+    	left: 55px;
+	}	
 </style>
 
 </head>
 
 <body>
+
+<template id="forecastItemTemplate">
+	<div class="forecastItem">
+		<div class="dt"><span id="dt"></span></div>
+		<div class="dtTime"><span id="dtTime"></span></div>
+		<div class="tempMax tempForecast"><span id="temp_max"></span><sup><small>°c</small></sup></div>	
+		<img class="iconForecastWeather" id="icon"> 
+		<div class="tempMin tempForecast"><span id="temp_min"></span><sup><small>°c</small></sup></div>		
+		<div class="weatherForecastDescription alignCenter"> <span id="description"></span></div>		
+		<div class="localityInfos alignCenter"> <span id="pressure"></span>hPa &nbsp; <span id="humidity"></span>% </div>
+
+		<div class="windForecast alignCenter">
+			<small><span id="deg"></span>°@<span id="speed"></span> kt</small>
+			<div class="windirForecast" id="windir">➤</div>					
+		</div>	
+	</div>
+</template>
 
 <div class="weatherWidget">
 	<div class="weatherContent weatherContentGrid">
@@ -166,27 +231,26 @@
 			</div>			
 		</div>
 		<div class="temperatureGridPos">			
-			<div class="temperatureGrid">
+			<div class="temperatureGrid alignCenter">
 				<div class="tempCurrent"><span id="temp"></span><sup><small>°c</small></sup></div>	
-				<div class="tempFeel"><span id="feels_like"></span><sup><small>°c</small></sup> feels</div>		
+				<div class="tempFeel alignRight"><span id="feels_like"></span><sup><small>°c</small></sup> feels</div>		
 				<div class="tempMin"><span id="temp_min"></span><sup><small>°c</small></sup></div>		
 				<div class="tempMax"><span id="temp_max"></span><sup><small>°c</small></sup></div>					
 			</div>
 
-			<div class="locality"> 
-			 	<div class="relative"> 
-			 		<img class="iconCurrentWeather" id="icon"> 
+			<div class="locality alignRight"> 
+			 	<div> 			 		
 			 		<span id="name"></span> <span class="country" id="country"></span> 
 			 	</div>
 			</div>
 
-			<div class="localityInfos"> <span id="lat">x</span>, <span id="lon">x</span> </div>
-			<div class="localityInfos"> <span id="pressure"></span>hPa / <span id="humidity"></span>% </div>
-			<div class="localityInfos" title="visibility"> <span id="visibility"></span> m</div>
-		</div>
-		
-		<div class="weatherCurrentDescription"> <span id="description"></span></div>
-
+			<div class="localityInfos alignRight"> <span id="lat">x</span>, <span id="lon">x</span> </div>
+			<div class="localityInfos alignRight"> <span id="pressure"></span>hPa / <span id="humidity"></span>% </div>
+			<div class="localityInfos alignRight" title="visibility"> <span id="visibility"></span> m</div>
+		</div>		
+		<img class="iconCurrentWeather" id="icon"> 
+		<div class="weatherCurrentDescription alignCenter"> <span id="description"></span></div>
+		<div class="forecast" id="forecast"></div>
 	</div>
 </div>
 
@@ -202,8 +266,8 @@
 */
 var API_KEY = '081dd463b40fb90f333a233324528a78';		
 
-function unixToHHMMSS(unixTS) { 
-	return new Date(unixTS*1000).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+function unixToHHMM(unixTS) { 
+	return new Date(unixTS*1000).toTimeString().slice(0,5);
 }
 
 function unixToIso(unixTS) { 
@@ -214,30 +278,34 @@ function getWeatherIcon(x) {
 	return `https://openweathermap.org/img/wn/${x}@2x.png`;
 }
 
-function applyPropertiesToDom(o) {
+function getWeekDay(date){    		
+	return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][date.getDay()];
+}
 
-	for(var key in o) {		
-		if (typeof(o[key])=="object" || typeof(o[key])=="array")
-			applyPropertiesToDom(o[key]);
+function applyPropertiesToDom(pties) {
+
+	for(var key in pties) {		
+		if (typeof(pties[key])=="object" || typeof(pties[key])=="array")
+			applyPropertiesToDom(pties[key]);
 		else
 		{			
 			var element = document.getElementById(key);
 			if (element != undefined)
 			{
 				if (key=="dt")
-					element.innerText = unixToIso(o[key]);
+					element.innerText = unixToIso(pties[key]);
 				else if (key=="sunrise" || key=="sunset")
-					element.innerText = unixToHHMMSS(o[key]);					
+					element.innerText = unixToHHMM(pties[key]);					
 				else if (key=="icon")				
-					element.src = getWeatherIcon(o[key]);
+					element.src = getWeatherIcon(pties[key]);
 				else
-					element.innerText = o[key];		
+					element.innerText = pties[key];		
 				
 				if (key=="deg")
-					document.getElementById("windir").style.transform = `rotate(${90+o[key]}deg)`;						
+					document.getElementById("windir").style.transform = `rotate(${90+pties[key]}deg)`;						
 			}
 			else
-				console.log(`Not found: ${key} ${o[key]}`);
+				console.log(`Not found: ${key} ${pties[key]}`);
 		}
 	}	
 }
@@ -245,7 +313,7 @@ function applyPropertiesToDom(o) {
 /*
 	https://openweathermap.org/api/weather-call-api
 */
-function getWeather(location, callBack) {	
+function getCurrentWeather(location, callBack) {	
 	var weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
 
 	var xmlhttp = new XMLHttpRequest();
@@ -266,7 +334,7 @@ function getWeather(location, callBack) {
 /*
 	https://openweathermap.org/forecast5
 */
-function getWeatherForecast5days(location, maxDays, callBack) {	
+function getForecastWeatherFor5days(location, maxDays, callBack) {	
 	var weatherApiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric&cnt=${maxDays}`;
 
 	var xmlhttp = new XMLHttpRequest();
@@ -276,59 +344,63 @@ function getWeatherForecast5days(location, maxDays, callBack) {
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4) {
 			if(xmlhttp.status == 200) {
-				var w = JSON.parse(xmlhttp.responseText);								
-				console.log(w);
-				
-				let s = `${w.city.name} (${w.city.country}) (${w.city.coord.lat},${w.city.coord.lon})<br>`;
-				s += `Sun ${unixToHHMMSS(w.city.sunrise)}↑ ${unixToHHMMSS(w.city.sunset)}↓<br>`;				
-
-				w.list.map( wl => {
-					s += `<br>★${unixToIso(wl.dt)}<br>`;
-					s += `Temp <strong>${wl.main.temp}°C (Feel ${wl.main.feels_like}°C)</strong> [${wl.main.temp_min}…${wl.main.temp_min}]°C<br>`;
-					s += `Wind ${wl.wind.deg}°@${Math.floor(wl.wind.speed*3600/1852)} Kt  ${wl.main.pressure} hPa / Humidity ${wl.main.humidity}% <br>`;
-	
-					wl.weather.map(wt => s += `${wt.description} <img src="${getWeatherIcon(wt.icon)}"}>`);
-					s += `Visibility ${wl.visibility} m<br>`;
-				});
-
-				callBack(s);
+				var forecast = JSON.parse(xmlhttp.responseText);																
+				callBack(forecast);
 			} 
 		}
 	};
 	xmlhttp.send(null);
 }
 
-function display(data, targetId) {
-	var target = document.getElementById(targetId);
-	target.innerHTML = data;
-}
+function displayForecast(forecast) { 
 
-function displayWeather(data) { display(data, "weather"); }
-function displayForecast(data) { display(data, "forecast"); }
+	const fragment = document.getElementById("forecastItemTemplate");
+	const target = document.getElementById("forecast");
+	
+	forecast.list.map( wl => {
+		 // Create an instance of the template content
+		const instance = document.importNode(fragment.content, true);
+	  
+	    // Add relevant content to the template
+	    const dt = new Date(wl.dt);
+	    console.log(`${wl.dt} - ${dt} -- ${unixToHHMM(dt)}`)
+	    instance.querySelector('#dt').innerHTML = getWeekDay(dt);
+	    instance.querySelector('#dtTime').innerHTML = unixToHHMM(dt);
+	    instance.querySelector('#temp_min').innerHTML = wl.main.temp_min;
+	    instance.querySelector('#temp_max').innerHTML = wl.main.temp_max;
+	    instance.querySelector('#pressure').innerHTML = wl.main.pressure;
+	    instance.querySelector('#humidity').innerHTML = wl.main.humidity;
+	    instance.querySelector('#speed').innerHTML = Math.floor(wl.wind.speed*3600/1852);
+	    instance.querySelector('#deg').innerHTML = wl.wind.deg;
+		instance.getElementById("windir").style.transform = `rotate(${90+wl.wind.deg}deg)`;						
+
+
+	    wl.weather.map(wt => {
+	    	instance.querySelector('#icon').src = getWeatherIcon(wt.icon);
+	    	instance.querySelector('#description').innerHTML = wt.description;
+	    	 });	
+
+	    // Append the instance ot the DOM
+	    target.appendChild(instance);
+	});
+}
 	
 
-function geolocWeather() {
+function getWeather() {
 		
 	let data = {"lat": 48.89, "lon": 2.07};	
-	if(false && 'geolocation' in navigator) {
+	if (false && 'geolocation' in navigator) {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			data.lat = position.coords.latitude;
-			data.lon = position.coords.longitude;		
-			displayWeather("");
-			displayForecast("");
-			getWeather(data, displayWeather);
-			getWeatherForecast5days(data, 5, displayForecast); // forecast for 2 days		
-	   });
-    }
-    else
-    {
-		getWeather(data, applyPropertiesToDom);
-	//	getWeatherForecast5days(data, 5, displayForecast); // forecast for 2 days		
+			data.lon = position.coords.longitude;				
+		});
 	}
-
+    
+    getCurrentWeather(data, applyPropertiesToDom);
+	getForecastWeatherFor5days(data, 5, displayForecast);	
 }
 
-geolocWeather();
+getWeather();
 
 
 </script>
