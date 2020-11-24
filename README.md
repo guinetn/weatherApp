@@ -1,6 +1,8 @@
-# weatherApp
-Portofio must have! a weather app
+# Weather App
 
+A portofio must have!
+
+![app's screenshoot](app.png)
 
 cloud picture (free)
 	https://toppng.com/cloud-png-PNG-free-PNG-Images_112785
