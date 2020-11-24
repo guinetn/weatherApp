@@ -2,6 +2,9 @@
 
 A portofio must have!
 
+# Data provider
+- https://api.openweathermap.org
+
 ![app's screenshoot](app.png)
 
 ## Weather pictures (free)
