@@ -1,7 +1,7 @@
 # Weather App
 
 A portofio must have to check if my css/js was not rusty!  
-You're free to use (I create it for my browser's default page).
+You're free to use (I create it for my browser's homepage).
 
 ![app's screenshoot](app.png)
 
