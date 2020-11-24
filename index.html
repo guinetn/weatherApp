@@ -7,27 +7,200 @@
 <title>Experiment</title>
 
 <style type="text/css">
-	body { font-family: monospace; }
+
+	:root {
+		--highColor:#fdde00
+	}
+
+	body { 
+		font-family: cursive; 
+	}
+
+	.relative, .weatherContent, .tempFeel, .weatherCurrentDescription, .wind {
+		position: relative;
+	}
+
+	.absolute, .dayPos, .weatherContentBackimg, .iconCurrentWeather, .windir { 
+		position: absolute;
+	}
+
+	.weatherWidget {
+		background: repeating-linear-gradient(169deg, #000000, #bbbed2);
+		width: 50%;					
+		border:solid 2px;
+		border-radius: 25px;
+	}
+	
+	.weatherContent {		
+		padding: 10x;
+		padding: 15px;	  	
+	}
+
+	.weatherContentBackimg {	  	    
+	    opacity: 0.4;	    	    	    
+	    background: url(cloud.png) 50px 27px no-repeat;
+	    width: 100%;
+	    height: 100%;
+	}
+	
+	.weatherContentGrid { 		
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		grid-template-rows: 180px 1.5em 160px;
+		grid-gap: 10px;			
+	}
+	
+	.locality { 
+		font-size: 1.8em;
+		color: white;
+		font-family: fantasy;
+		text-align: right;
+	}
+	.country {
+		font-size: 0.4em;		
+	}
+		
+	.localityInfos {
+		font-size: 0.8em;		
+		color: white;	
+		text-align: right;			
+	}
+	
+	.dayPos {
+		grid-column: 1/5;		
+	}
+
+	.dt, .wind, .sun {
+		color: var(--highColor);	
+		font-size: 1.2em;
+	}
+	
+	.sun {	
+		font-size: 1.0em;
+		color: #fff;	
+	}
+
+	.temperatureGrid { 		
+		display: grid;
+		grid-template-columns: 0.1fr 0.8fr;
+		grid-template-rows: repeat(3, 2em);
+		grid-gap: 2px;
+    	text-align: center;				
+	}
+
+	.temperatureGridPos {
+		grid-column: 5
+	}
+
+	.tempCurrent { 
+		font-size: 3.5em;
+		color: var(--highColor);
+		text-align: right;
+		font-family: fantasy;
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.tempMin, .tempMax {
+		color: white;	
+		font-size: 1.0em;
+	}
+
+	.tempMin {
+		grid-row: 3;
+	}
+	.tempMax {
+		grid-row: 1;
+	}
+	.tempFeel {		
+		font-weight:100;
+		color: var(--highColor);				
+		text-align: right;
+		grid-row: 1;
+		grid-column: 2;		
+    	top: -10px;
+	}
+
+	.weatherCurrentDescription {
+		grid-row: 2;
+		grid-column: 1/6;
+		font-style: italic;
+		color: white;			
+		text-align: center;
+	}
+	.iconCurrentWeather {	    
+	    top: 16px;	
+	    left: -34px;
+	    background-color: var(--highColor);	    
+	    border-radius: 50%;
+	    transform: scale(0.65);
+	}
+	
+	.wind {  		
+		top:50px;
+		left:30px;
+		color: #4ceeff;		
+	}
+
+	.windir {		
+		display: inline-block;	
+	    top: 1.2em;
+    	left: 4px;	
+	}
 </style>
 
 </head>
 
 <body>
 
-<div id="weather"></div>
-<hr>
-<hr>
-<div id="forecast"></div>
-<div> 
-	<small><a target='_blank' href='https://api.openweathermap.org'>openweathermap.org</a></small> 
+<div class="weatherWidget">
+	<div class="weatherContent weatherContentGrid">
+		<div class="weatherContentBackimg"></div>	
+		<div class="dayPos"> 
+			<div class="dt"><span id="dt"></span></div>
+			<div class="sun"><small>sr <span id="sunrise"></span> &nbsp; <nobr>ss <span id="sunset"></span></nobr></small></div>
+			<div class="wind">
+				<small><span id="deg"></span>° @<span id="speed"></span> kt</small>
+				<div class="windir" id="windir">➤</div>	
+				
+			</div>			
+		</div>
+		<div class="temperatureGridPos">			
+			<div class="temperatureGrid">
+				<div class="tempCurrent"><span id="temp"></span><sup><small>°c</small></sup></div>	
+				<div class="tempFeel"><span id="feels_like"></span><sup><small>°c</small></sup> feels</div>		
+				<div class="tempMin"><span id="temp_min"></span><sup><small>°c</small></sup></div>		
+				<div class="tempMax"><span id="temp_max"></span><sup><small>°c</small></sup></div>					
+			</div>
+
+			<div class="locality"> 
+			 	<div class="relative"> 
+			 		<img class="iconCurrentWeather" id="icon"> 
+			 		<span id="name"></span> <span class="country" id="country"></span> 
+			 	</div>
+			</div>
+
+			<div class="localityInfos"> <span id="lat">x</span>, <span id="lon">x</span> </div>
+			<div class="localityInfos"> <span id="pressure"></span>hPa / <span id="humidity"></span>% </div>
+			<div class="localityInfos" title="visibility"> <span id="visibility"></span> m</div>
+		</div>
+		
+		<div class="weatherCurrentDescription"> <span id="description"></span></div>
+
+	</div>
 </div>
+
+	<div id="forecast"></div>
+	<div> 
+		<small>Weather app by Nicolas Guinet & <a target='_blank' href='https://api.openweathermap.org'>openweathermap.org</a></small> 
+	</div>
 
 <script>
   
 /* 
 	https://api.openweathermap.org
 */
-	
+var API_KEY = '081dd463b40fb90f333a233324528a78';		
 
 function unixToHHMMSS(unixTS) { 
 	return new Date(unixTS*1000).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
@@ -37,15 +210,42 @@ function unixToIso(unixTS) {
 	return new Date(unixTS*1000).toLocaleString().replace(" à", "");
 }
 
-function getIcon(x) {
+function getWeatherIcon(x) {
 	return `https://openweathermap.org/img/wn/${x}@2x.png`;
+}
+
+function applyPropertiesToDom(o) {
+
+	for(var key in o) {		
+		if (typeof(o[key])=="object" || typeof(o[key])=="array")
+			applyPropertiesToDom(o[key]);
+		else
+		{			
+			var element = document.getElementById(key);
+			if (element != undefined)
+			{
+				if (key=="dt")
+					element.innerText = unixToIso(o[key]);
+				else if (key=="sunrise" || key=="sunset")
+					element.innerText = unixToHHMMSS(o[key]);					
+				else if (key=="icon")				
+					element.src = getWeatherIcon(o[key]);
+				else
+					element.innerText = o[key];		
+				
+				if (key=="deg")
+					document.getElementById("windir").style.transform = `rotate(${90+o[key]}deg)`;						
+			}
+			else
+				console.log(`Not found: ${key} ${o[key]}`);
+		}
+	}	
 }
 
 /*
 	https://openweathermap.org/api/weather-call-api
 */
-function getWeather(location, callBack) {
-	var API_KEY       = '081dd463b40fb90f333a233324528a78';	
+function getWeather(location, callBack) {	
 	var weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
 
 	var xmlhttp = new XMLHttpRequest();
@@ -56,16 +256,7 @@ function getWeather(location, callBack) {
 		if (xmlhttp.readyState == 4) {
 			if(xmlhttp.status == 200) {
 				var weather = JSON.parse(xmlhttp.responseText);								
-				console.log(weather);
-
-				let weatherForHuman = `${weather.name} (${weather.sys.country}) (${weather.coord.lat},${weather.coord.lon}) At ${unixToIso(weather.dt)}<br>`;
-				weatherForHuman += `Sun ${unixToHHMMSS(weather.sys.sunrise)}↑ ${unixToHHMMSS(weather.sys.sunset)}↓<br>`;				
-				weatherForHuman += `Temp <strong>${weather.main.temp}°C (Feel ${weather.main.feels_like}°C)</strong> [${weather.main.temp_min}…${weather.main.temp_min}]°C<br>`;
-				weatherForHuman += `Wind ${weather.wind.deg}°@${Math.floor(weather.wind.speed*3600/1852)} Kt  ${weather.main.pressure} hPa / Humidity ${weather.main.humidity}% <br>`;
-				weatherForHuman += `Visibility ${weather.visibility} m<br>`;
-				weather.weather.map(w => weatherForHuman += `${w.description} <img src="${getIcon(w.icon)}"}>`);
-				
-				callBack(weatherForHuman);
+				callBack(weather);
 			} 
 		}
 	};
@@ -75,8 +266,7 @@ function getWeather(location, callBack) {
 /*
 	https://openweathermap.org/forecast5
 */
-function getWeatherForecast5days(location, maxDays, callBack) {
-	var API_KEY       = '081dd463b40fb90f333a233324528a78';	
+function getWeatherForecast5days(location, maxDays, callBack) {	
 	var weatherApiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric&cnt=${maxDays}`;
 
 	var xmlhttp = new XMLHttpRequest();
@@ -97,7 +287,7 @@ function getWeatherForecast5days(location, maxDays, callBack) {
 					s += `Temp <strong>${wl.main.temp}°C (Feel ${wl.main.feels_like}°C)</strong> [${wl.main.temp_min}…${wl.main.temp_min}]°C<br>`;
 					s += `Wind ${wl.wind.deg}°@${Math.floor(wl.wind.speed*3600/1852)} Kt  ${wl.main.pressure} hPa / Humidity ${wl.main.humidity}% <br>`;
 	
-					wl.weather.map(wt => s += `${wt.description} <img src="${getIcon(wt.icon)}"}>`);
+					wl.weather.map(wt => s += `${wt.description} <img src="${getWeatherIcon(wt.icon)}"}>`);
 					s += `Visibility ${wl.visibility} m<br>`;
 				});
 
@@ -119,14 +309,6 @@ function displayForecast(data) { display(data, "forecast"); }
 
 function geolocWeather() {
 		
-	/*
-	[Deprecation] getCurrentPosition() and watchPosition() 
-		no longer work on insecure origins. 
-		To use this feature, you should consider switching your application to a secure origin, 
-		such as HTTPS. 	See https://goo.gl/rStTGz*/
-
-
-
 	let data = {"lat": 48.89, "lon": 2.07};	
 	if(false && 'geolocation' in navigator) {
 		navigator.geolocation.getCurrentPosition(function(position) {
@@ -140,10 +322,8 @@ function geolocWeather() {
     }
     else
     {
-    	displayWeather("");
-		displayForecast("");
-		getWeather(data, displayWeather);
-		getWeatherForecast5days(data, 5, displayForecast); // forecast for 2 days		
+		getWeather(data, applyPropertiesToDom);
+	//	getWeatherForecast5days(data, 5, displayForecast); // forecast for 2 days		
 	}
 
 }
