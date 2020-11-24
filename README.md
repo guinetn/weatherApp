@@ -7,8 +7,8 @@ You're free to use (I create it for my browser's homepage).
 
 # Configuration
 - Register to https://api.openweathermap.org  
-- Get an APi key and inject it into index.html: 
-- Original api key used in development is no more valid!  
+- Get an APi key and inject it into index.html (development api key is no more valid):
+
 ```js
 const config = {
 	apiKey: "081dd463b40fb90f333a233324528a78", // Get an api Key here: https://api.openweathermap.org
