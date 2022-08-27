@@ -1,450 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Experiment</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Weather API application</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-    <style type="text/css">
-      :root {
-        --highColor: #fdde00;
-        --windColor: #4ceeff;
-      }
+<body>
 
-      body {
-        font-family: cursive;
-      }
+  <!-- FORECAST TEMPLATE -->
+  <template id="forecastTemplate">
 
-      .alignCenter {
-        text-align: center;
-      }
+    <div class="forecast_widget">
+      <div class="date_forecast"><span id="dt"></span></div>
+      <div class="time_forecast"><span id="dtTimeForecast"></span></div>
 
-      .alignRight {
-        text-align: right;
-      }
-
-      .relative,
-      .weatherContent,
-      .tempFeel,
-      .weatherCurrentDescription,
-      .wind,
-      .forecastWidget {
-        position: relative;
-      }
-
-      .absolute,
-      .dayPos,
-      .weatherContentBackimg,
-      .iconCurrentWeather,
-      .windir,
-      .windirForecast,
-      .iconForecastWeather,
-      .dtTimeForecast {
-        position: absolute;
-      }
-
-      .mbot10 {
-        margin-bottom: 10px;
-      }
-
-      .weatherWidget {
-        background: repeating-linear-gradient(62deg, #000000, #bbbed2);
-        width: 60%;
-        border: solid 2px;
-        border-radius: 25px;
-      }
-
-      .weatherContent {
-        padding: 10x;
-        padding: 15px;
-      }
-
-      .weatherContentBackimg {
-        opacity: 0.4;
-        background: url(cloud.png) 50px 27px no-repeat;
-        width: 100%;
-        height: 100%;
-      }
-
-      .weatherContentGrid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: 180px 1.5em 160px;
-        grid-gap: 10px;
-      }
-
-      .locality {
-        font-size: 1.8em;
-        color: white;
-        font-family: fantasy;
-      }
-      .country {
-        font-size: 0.4em;
-      }
-
-      .localityInfos {
-        font-size: 0.8em;
-        color: white;
-      }
-
-      .dayPos {
-        grid-column: 1/5;
-      }
-
-      .dt,
-      .dtTimeForecast,
-      .sun {
-        color: var(--highColor);
-        font-size: 1.2em;
-      }
-
-      .sun {
-        font-size: 1em;
-        color: #fff;
-      }
-
-      .temperatureGrid {
-        display: grid;
-        grid-template-columns: 0.1fr 0.8fr;
-        grid-template-rows: repeat(3, 2em);
-        grid-gap: 2px;
-      }
-
-      .temperatureGridPos {
-        grid-column: 5;
-      }
-
-      .tempCurrent {
-        font-size: 3.5em;
-        color: var(--highColor);
-        text-align: right;
-        font-family: fantasy;
-        grid-column: 2;
-        grid-row: 1;
-      }
-
-      .tempMin,
-      .tempMax {
-        color: white;
-        font-size: 1em;
-      }
-
-      .tempMin {
-        grid-row: 3;
-      }
-      .tempMax {
-        grid-row: 1;
-      }
-      .tempFeel {
-        font-weight: 100;
-        color: var(--highColor);
-        grid-row: 1;
-        grid-column: 2;
-        top: -10px;
-      }
-
-      .weatherCurrentDescription {
-        grid-row: 2;
-        grid-column: 1/6;
-        font-style: italic;
-        color: white;
-      }
-      .iconCurrentWeather {
-        top: 15%;
-        left: 40%;
-        transform: scale(3);
-      }
-
-      .wind {
-        color: var(--windColor);
-      }
-      .windCurrent {
-        font-size: 1.2em;
-      }
-      .windCurrentPos {
-        top: 50px;
-        left: 30px;
-      }
-      .windir {
-        display: inline-block;
-        top: 1.2em;
-        left: 4px;
-      }
-
-      /* -------- FORECAST --------- */
-
-      .forecast {
-        grid-row: 3;
-        grid-column: 1/6;
-        display: flex;
-        flex-flow: row;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .forecastWidget {
-        background: repeating-linear-gradient(63deg, #09081d, #020321);
-        border: solid 1px white;
-        border-radius: 8px;
-        padding: 8px;
-        min-width: 110px;
-        margin-left: 10px;
-        margin-top: 5px;
-      }
-
-      .dtTimeForecast {
-        font-size: 0.8em;
-        left: 83px;
-        top: 32px;
-      }
-
-      .iconForecastWeather {
-        transform: scale(0.5);
-        left: 13px;
-        top: 8px;
-      }
-
-      .weatherForecastDescription {
-        font-style: italic;
-        color: white;
-        font-size: 0.8em;
-      }
-
-      .weatherForecastDescriptionPos {
-        margin-top: 15px;
-        position: relative;
-      }
-
-      .tempForecast {
-        font-size: 0.7em;
-      }
-
-      .windirForecast {
-        display: inline-block;
-        top: 30px;
-        left: 55px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <template id="forecastWidgetTemplate">
-      <div class="forecastWidget">
-        <div class="dt"><span id="dt"></span></div>
-        <div class="dtTimeForecast"><span id="dtTimeForecast"></span></div>
-        <div class="tempMax tempForecast">
-          <span id="temp_max"></span><sup><small>°c</small></sup>
-        </div>
-        <img class="iconForecastWeather" id="icon" />
-        <div class="tempMin tempForecast">
+      <div class="flex_row">
+        <div class="temp_minmax_forecast">
+          <span id="temp_max"></span><sup><small>°c</small></sup><br />
           <span id="temp_min"></span><sup><small>°c</small></sup>
         </div>
-
-        <div class="weatherForecastDescriptionPos">
-          <div class="weatherForecastDescription alignCenter">
-            <span id="description"></span>
-          </div>
-          <div class="localityInfos alignCenter mbot10">
-            <span id="pressure"></span>hPa &nbsp; <span id="humidity"></span>%
-          </div>
-          <div class="localityInfos alignCenter wind">
-            <span id="deg"></span>°@<span id="speed"></span> kt
-          </div>
+        <img class="icon_weather_forecast" id="icon" />
+        <div class="flex_col wind_forecast">
+          <div class="windir_forecast" id="windir">➤</div>
+          <small><span id="deg"></span>°@<span id="speed"></span> kt</small>
         </div>
-        <div class="windirForecast wind" id="windir">➤</div>
       </div>
-    </template>
 
-    <div class="weatherWidget">
-      <div class="weatherContent weatherContentGrid">
-        <div class="weatherContentBackimg"></div>
-        <div class="dayPos">
-          <div class="dt"><span id="dt"></span></div>
-          <div class="sun">
-            <small
-              >sr <span id="sunrise"></span> &nbsp;
-              <nobr>ss <span id="sunset"></span></nobr
-            ></small>
-          </div>
-          <div class="windCurrentPos windCurrent wind">
-            <small><span id="deg"></span>° @<span id="speed"></span> kt</small>
-            <div class="windir" id="windir">➤</div>
-          </div>
-        </div>
-        <div class="temperatureGridPos">
-          <div class="temperatureGrid alignCenter">
-            <div class="tempCurrent">
-              <span id="temp"></span><sup><small>°c</small></sup>
-            </div>
-            <div class="tempFeel alignRight">
-              <span id="feels_like"></span><sup><small>°c</small></sup> feels
-            </div>
-            <div class="tempMin">
-              <span id="temp_min"></span><sup><small>°c</small></sup>
-            </div>
-            <div class="tempMax">
-              <span id="temp_max"></span><sup><small>°c</small></sup>
-            </div>
-          </div>
-
-          <div class="locality alignRight">
-            <div>
-              <span id="name"></span> <span class="country" id="country"></span>
-            </div>
-          </div>
-
-          <div class="localityInfos alignRight">
-            <span id="lat">x</span>, <span id="lon">x</span>
-          </div>
-          <div class="localityInfos alignRight">
-            <span id="pressure"></span>hPa / <span id="humidity"></span>%
-          </div>
-          <div class="localityInfos alignRight" title="visibility">
-            <span id="visibility"></span> m
-          </div>
-        </div>
-        <img class="iconCurrentWeather" id="icon" />
-        <div class="weatherCurrentDescription alignCenter">
-          <span id="description"></span>
-        </div>
-        <div class="forecast" id="forecast"></div>
+      <div class="flex_col description_forecast">
+        <div><span id="description"></span></div>
+        <div><span id="pressure"></span> hPa &nbsp; <span id="humidity"></span>%</div>
       </div>
     </div>
 
-    <div id="forecast"></div>
-    <div>
-      <small>Weather app by Nicolas Guinet & <a target="_blank" href="https://api.openweathermap.org">openweathermap.org</a></small>
     </div>
 
-    <script>
-      const config = {
-        apiKey: "081dd463b40fb90f333a233324528a78", // Get an api Key here: https://api.openweathermap.org
-        useNavigatorGeolocation: false,
-		location: { lat: 48.89, lon: 2.07 },
-		maxForecasts:5
-      };
+  </template>
 
-      function unixToHHMM(unixTS) {
-        return new Date(unixTS * 1000).toTimeString().slice(0, 5);
-      }
+  <!-- DATE -->
+  <div class="info_block date">
+    <span id="dt"></span>
+  </div>
 
-      function unixToIso(unixTS) {
-        return new Date(unixTS * 1000).toLocaleString().replace(" à", "");
-      }
+  <!-- WHERE -->
+  <div class="info_block">
 
-      function getWeatherIcon(x) {
-        return `https://openweathermap.org/img/wn/${x}@2x.png`;
-      }
+    <div class="flex_col">
 
-      function getWeekDay(date) {
-        return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][date.getDay()];
-      }
+      <div class="flex_col">
 
-      function applyPropertiesToDom(pties) {
-        for (var key in pties) {
-          if (typeof pties[key] == "object" || typeof pties[key] == "array")
-            applyPropertiesToDom(pties[key]);
-          else {
-            var element = document.getElementById(key);
-            if (element != undefined) {
-			  if (key == "dt") 
-			  	element.innerText = unixToIso(pties[key]);
-              else if (key == "sunrise" || key == "sunset")
-                element.innerText = unixToHHMM(pties[key]);
-			  else if (key == "icon") 
-			  	element.src = getWeatherIcon(pties[key]);
-              else element.innerText = pties[key];
+        <div class="place_details">
+          🛰️ <span id="lat">x</span>N <span id="lon">x</span>E
+        </div>
 
-              if (key == "deg")
-                document.getElementById("windir").style.transform = `rotate(${90 + pties[key]}deg)`;
-			} 
-			// else console.log(`Not found: ${key} ${pties[key]}`);
-          }
-        }
-      }
+        <div>
+          <div class="flex_row place_names">
+            <div>🗺️</div>
+            <div class="city" id="name"></div>
+            <div class="country" id="country"></div>
+          </div>
+        </div>
 
-      /*	https://openweathermap.org/api/weather-call-api */
-      function getCurrentWeather(data, callBack) {
-        var weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${data.location.lat}&lon=${data.location.lon}&appid=${data.apiKey}&units=metric`;
+        <div class="place_details">
+          ☀️<sub>sr</sub> <span id="sunrise"></span> 🌙<sub>ss</sub> <span id="sunset"></span>
+        </div>
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", weatherApiUrl, true);
-        xmlhttp.withCredentials = false;
+      </div>
 
-        xmlhttp.onreadystatechange = function () {
-          if (xmlhttp.readyState == 4) {
-            if (xmlhttp.status == 200) {
-              var weather = JSON.parse(xmlhttp.responseText);
-              callBack(weather);
-            }
-          }
-        };
-        xmlhttp.send(null);
-      }
+      <!-- PRESSURE -->
+      <div class="info_block">
+        <div class="place_details alignRight">
+          <span id="pressure"></span> hPa / <span id="humidity"></span>%
+        </div>
+        <div class="place_details alignRight" title="visibility">
+          🔭 <span id="visibility"></span> m
+        </div>
+      </div>
 
-      /* https://openweathermap.org/forecast5 */
-      function getForecastWeather(data, callBack) {
-        var weatherApiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${data.location.lat}&lon=${data.location.lon}&appid=${data.apiKey}&units=metric&cnt=${data.maxForecasts}`;
+    </div>
+  </div>
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", weatherApiUrl, true);
-        xmlhttp.withCredentials = false;
+  <!-- TEMPERATURES -->
+  <div class="info_block">
 
-        xmlhttp.onreadystatechange = function () {
-          if (xmlhttp.readyState == 4) {
-            if (xmlhttp.status == 200) {
-              var forecast = JSON.parse(xmlhttp.responseText);
-              callBack(forecast);
-            }
-          }
-        };
-        xmlhttp.send(null);
-      }
+    <div class="temperature_grid alignCenter">
+      <div class="temp_current">
+        <span id="temp"></span><sup><small>°c</small></sup>
+      </div>
+      <div class="temp_feel text_right">
+        <span id="feels_like"></span><sup><small>°c</small></sup> feels
+      </div>
+      <div class="temp_min temp_minmax">
+        <span id="temp_min"></span><sup><small>°c</small></sup>
+      </div>
+      <div class="temp_max temp_minmax">
+        <span id="temp_max"></span><sup><small>°c</small></sup>
+      </div>
+    </div>
 
-      function displayForecast(forecast) {
-        const fragment = document.getElementById("forecastWidgetTemplate");
-        const target = document.getElementById("forecast");
+  </div>
 
-        forecast.list.map((wl) => {
-          // Create an instance of the template content
-          const instance = document.importNode(fragment.content, true);
+  <!-- WIND -->
+  <div class="info_block">
+    <div class="wind">
+      <div class="windir" id="windir">➤</div>
+      <small><span id="deg"></span>°@<span id="speed"></span> kt</small>
+    </div>
+  </div>
 
-          // Add relevant content to the template
-          const dt = new Date(wl.dt * 1000);
-          instance.querySelector("#dt").innerHTML = getWeekDay(dt);
-          instance.querySelector("#dtTimeForecast").innerHTML = unixToHHMM(wl.dt);
-          instance.querySelector("#temp_min").innerHTML = wl.main.temp_min;
-          instance.querySelector("#temp_max").innerHTML = wl.main.temp_max;
-          instance.querySelector("#pressure").innerHTML = wl.main.pressure;
-          instance.querySelector("#humidity").innerHTML = wl.main.humidity;
-          instance.querySelector("#speed").innerHTML = Math.floor((wl.wind.speed * 3600) / 1852); // m/s -> Kt
-          instance.querySelector("#deg").innerHTML = wl.wind.deg;
-          instance.getElementById("windir").style.transform = `rotate(${90+wl.wind.deg}deg)`;
+  <!-- CLOUDS -->
+  <div class="info_block">
+    <div class="flex_col">
+      <img class="icon_current_weather" id="icon" />
+      <div class="weather_current_description" id="description"> </div>
+    </div>
+  </div>
 
-          wl.weather.map((wt) => {
-            instance.querySelector("#icon").src = getWeatherIcon(wt.icon);
-            instance.querySelector("#description").innerHTML = wt.description;
-          });
+  <!-- FORECASTS -->
+  <div class="forecasts" id="forecasts"></div>
 
-          // Append the instance ot the DOM
-          target.appendChild(instance);
-        });
-      }
 
-      function getWeather() {
-        if (config.useNavigatorGeolocation && "geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            config.location.lat = position.coords.latitude;
-            config.location.lon = position.coords.longitude;
-          });
-        }
+  <div class="flex_col">
+    <p>
+      Weather App by Nicolas Guinet.<br>
+      Weather data: <a target="_blank" href="https://api.openweathermap.org">openweathermap.org</a>
+    </p>
+  </div>
 
-        getCurrentWeather(config, applyPropertiesToDom);
-        getForecastWeather(config, displayForecast);
-      }
+  <script type="module" src="js/weather.js"></script>
+</body>
 
-      getWeather();
-    </script>
-  </body>
 </html>

@@ -1,0 +1,188 @@
+﻿:root {
+  --highColor: #fdde00;
+  --whiteColor: #fff;
+  --blackColor: #000;
+  --windColor: #4ceeff;
+  --placeColor: #000;
+}
+
+body {
+  font-family: monospace;
+  font-size: 1.2em;
+}
+
+/* - - - LAYOUTS - - - */
+
+.flex_col {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flex_row {
+  display:flex;
+  align-items: center;
+}
+
+/* - - - BLOCKS - - - */
+
+.info_block {
+  display: inline-block;
+  padding: 0.5em;
+
+  border: solid 1px black;
+  border-radius: 8px; 
+}
+
+
+/* - - - ALIGNS - - - */
+
+.text_right {
+  text-align: right;
+}
+
+
+
+
+/* - - - BLOCKS OF DATA - - - */
+
+
+
+/* - - - DATE - - - */
+
+.date {
+  background-color: #000;
+  color: var(--highColor);
+  padding: 5px 10px;
+}
+
+/* - - - PLACE - - - */
+
+.place_names {
+  font-family: fantasy;
+}
+.city {
+  margin-left: 0.3em;
+  font-size: 1.5em;
+}
+.country {
+  font-size: 0.6em;
+  align-self: center;
+  margin-left: 0.5em;
+}
+
+.place_details {
+  font-size: 0.8em;
+}
+
+
+/* - - - T°C - - - */
+
+.temperature_grid {
+  display: grid;
+  grid-template-columns: 0.1fr 0.8fr;
+  grid-template-rows: repeat(3, 2em);
+  grid-gap: 2px;
+}
+
+.temp_current {
+  font-size: 3.5em;
+  color: var(--highColor);
+  text-align: right;
+  font-family: fantasy;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.temp_minmax {
+  color: var(--blackColor);
+  font-size: 1em;
+}
+.temp_min {
+  grid-row: 3;
+}
+.temp_max {
+  grid-row: 1;
+}
+
+.temp_feel {
+  grid-row: 3;
+  grid-column: 2;
+  position: relative;
+  top: 10px;
+  font-size: x-large;
+  font-weight: 200;
+  color: var(--highColor);
+}
+
+
+/* - - - WIND - - - */
+
+.wind {
+  color: var(--windColor);
+  font-size: 1.2em;
+}
+
+.windir {
+  display: inline-block;
+}
+
+
+/* - - - WHEATHER DESCR - - - */
+
+.icon_current_weather {
+  transform: scale(1.5);
+}
+
+
+/* - - - FORECAST - - - */
+
+.forecasts {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.forecast_widget {
+  background: repeating-linear-gradient(63deg, #09081d, #020321);
+  border: solid 1px white;
+  border-radius: 8px;
+  padding: 8px;
+  margin-left: 10px;
+  margin-top: 5px;
+}
+
+.date_forecast {
+  color: var(--highColor);
+  font-size: 1.2em;
+}
+
+.time_forecast {
+  font-size: 0.8em;
+  color: var(--highColor);
+}
+
+.temp_minmax_forecast {
+  color: var(--whiteColor);
+  font-size: 1em;
+}
+
+.description_forecast {
+  color: var(--highColor);
+  font-style: italic;
+  font-size: 1.0em;
+}
+
+.wind_forecast {
+  color: var(--windColor);
+  font-size: 1.2em;
+}
+
+.windir_forecast {
+  display: inline-block;
+}
+
+.icon_weather_forecast {
+  transform: scale(0.7);
+}
