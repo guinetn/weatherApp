@@ -2,7 +2,7 @@
 import unixToHHMM, { unixToIso, getWeatherIcon, getWeekDay } from './utils.js';
 
 const config = {
-  apiKey: "081dd463b40fb90f333a233324528a78", // Get an api Key here: https://api.openweathermap.org
+  apiKey: "xxxxxxxxxxxxxxxx", // Get an api Key here: https://api.openweathermap.org
   useNavigatorGeolocation: false,
   location: { lat: 48.89, lon: 2.07 },
   maxForecasts: 5

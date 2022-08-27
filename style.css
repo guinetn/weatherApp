@@ -1,9 +1,9 @@
 ﻿:root {
   --highColor: #fdde00;
   --whiteColor: #fff;
-  --blackColor: #000;
+  --blackColor: rgb(208, 210, 170);
   --windColor: #4ceeff;
-  --placeColor: #000;
+  --placeColor: rgb(63, 206, 172);
 }
 
 body {
@@ -17,11 +17,15 @@ body {
   display:flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+
 }
 
 .flex_row {
   display:flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* - - - BLOCKS - - - */
@@ -30,49 +34,49 @@ body {
   display: inline-block;
   padding: 0.5em;
 
-  border: solid 1px black;
-  border-radius: 8px; 
+  /* border: solid 1px black;
+  border-radius: 8px;  */
 }
-
-
-/* - - - ALIGNS - - - */
-
-.text_right {
-  text-align: right;
-}
-
-
 
 
 /* - - - BLOCKS OF DATA - - - */
 
+/* - - - WEATHER WIDGET - - - */
 
+.weather_widget {
+  background: repeating-linear-gradient(309deg, #1159af, #002569);
+  color: var(--whiteColor);
+}
 
 /* - - - DATE - - - */
 
 .date {
-  background-color: #000;
-  color: var(--highColor);
   padding: 5px 10px;
+  font-size: 1.5em;
 }
 
 /* - - - PLACE - - - */
+.place {
+  color: var(--whiteColor);
+}
 
 .place_names {
-  font-family: fantasy;
-}
-.city {
-  margin-left: 0.3em;
   font-size: 1.5em;
 }
+
+.city {
+  font-family: fantasy;
+  margin-left: 0.3em;
+  font-size: 2em;
+}
 .country {
-  font-size: 0.6em;
-  align-self: center;
-  margin-left: 0.5em;
+  font-size: 0.8em;
+  margin-left: 0.7em;
+  align-self: end;
 }
 
 .place_details {
-  font-size: 0.8em;
+  font-size: 1.0em;
 }
 
 
@@ -82,7 +86,8 @@ body {
   display: grid;
   grid-template-columns: 0.1fr 0.8fr;
   grid-template-rows: repeat(3, 2em);
-  grid-gap: 2px;
+  grid-gap: 10px;
+  margin: 1em;
 }
 
 .temp_current {
@@ -97,6 +102,8 @@ body {
 .temp_minmax {
   color: var(--blackColor);
   font-size: 1em;
+  position:relative;
+  left:40px;
 }
 .temp_min {
   grid-row: 3;
@@ -113,6 +120,7 @@ body {
   font-size: x-large;
   font-weight: 200;
   color: var(--highColor);
+  text-align: right;
 }
 
 
@@ -121,6 +129,10 @@ body {
 .wind {
   color: var(--windColor);
   font-size: 1.2em;
+  margin: 0.2em 1em;
+  position: relative;
+  top:-5px;
+  height: 0;
 }
 
 .windir {
@@ -134,6 +146,10 @@ body {
   transform: scale(1.5);
 }
 
+.weather_current_description {
+  text-transform: uppercase;
+  margin: 1em;
+}
 
 /* - - - FORECAST - - - */
 
@@ -145,8 +161,8 @@ body {
 }
 
 .forecast_widget {
-  background: repeating-linear-gradient(63deg, #09081d, #020321);
-  border: solid 1px white;
+  background-color: #3267a957;
+  border: solid 1px fffafa0f;
   border-radius: 8px;
   padding: 8px;
   margin-left: 10px;
@@ -154,24 +170,30 @@ body {
 }
 
 .date_forecast {
-  color: var(--highColor);
+  color: var(--whiteColor);
   font-size: 1.2em;
+  text-transform: uppercase;
 }
 
 .time_forecast {
   font-size: 0.8em;
-  color: var(--highColor);
+  color: var(--whiteColor);
 }
 
 .temp_minmax_forecast {
-  color: var(--whiteColor);
-  font-size: 1em;
+  color: #92b5e4;
+  font-size: 1.5em;
 }
 
 .description_forecast {
-  color: var(--highColor);
-  font-style: italic;
+  color: var(--whiteColor);
   font-size: 1.0em;
+  text-transform: uppercase;
+}
+
+.description_infos {
+  font-size: 0.7em;
+  
 }
 
 .wind_forecast {

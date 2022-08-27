@@ -30,8 +30,8 @@
       </div>
 
       <div class="flex_col description_forecast">
-        <div><span id="description"></span></div>
-        <div><span id="pressure"></span> hPa &nbsp; <span id="humidity"></span>%</div>
+        <div><span id="description"></span></div><br />
+        <div class="description_infos"><span id="pressure"></span> hPa &nbsp; <span id="humidity"></span>%</div>
       </div>
     </div>
 
@@ -39,90 +39,105 @@
 
   </template>
 
-  <!-- DATE -->
-  <div class="info_block date">
-    <span id="dt"></span>
-  </div>
+  <div class="flex_col">
 
-  <!-- WHERE -->
-  <div class="info_block">
-
-    <div class="flex_col">
-
+    <div class="info_block weather_widget">
       <div class="flex_col">
 
-        <div class="place_details">
-          🛰️ <span id="lat">x</span>N <span id="lon">x</span>E
+        <!-- DATE -->
+        <div class="info_block date">
+          <span id="dt"></span>
         </div>
 
-        <div>
-          <div class="flex_row place_names">
-            <div>🗺️</div>
-            <div class="city" id="name"></div>
-            <div class="country" id="country"></div>
+        <div class="flex_row">
+
+          <!-- WHERE -->
+          <div class=" place">
+
+            <div class="flex_col">
+
+              <div class="flex_col">
+
+                <div>
+                  <div class="flex_row place_names">
+                    <div class="city" id="name"></div>
+                    <div class="country" id="country"></div>
+                  </div>
+                </div>
+
+                <div class="place_details">
+                  ☀️<sub>sr</sub> <span id="sunrise"></span> &nbsp; &nbsp; 🌙<sub>ss</sub> <span id="sunset"></span>
+                </div>
+                <div class="place_details">
+                  <span id="lat">x</span>N <span id="lon">x</span>E
+                </div>
+
+              </div>
+
+              <!-- PRESSURE -->
+              <div class="">
+                <div class="place_details alignRight">
+                  <span id="pressure"></span> hPa / <span id="humidity"></span>% / <span id="visibility"></span> m
+                </div>
+              </div>
+
+            </div>
           </div>
+
         </div>
 
-        <div class="place_details">
-          ☀️<sub>sr</sub> <span id="sunrise"></span> 🌙<sub>ss</sub> <span id="sunset"></span>
+        <div class="flex_row">
+
+          <!-- CLOUDS -->
+          <div class="info_block">
+
+            <div class="flex_col weather_current_description">
+              <!-- WIND -->
+              <div class="info_block">
+                <div class="wind">
+                  <div class="windir" id="windir">➤</div>
+                  <span id="deg"></span>° @<span id="speed"></span> kt
+                </div>
+              </div>
+
+              <img class="icon_current_weather" id="icon" />
+              <cite id="description"> </cite>
+            </div>
+          </div>
+
+
+
+          <!-- TEMPERATURES -->
+          <div class="info_block">
+
+            <div class="temperature_grid alignCenter">
+              <div class="temp_current">
+                <span id="temp"></span><sup><small>°c</small></sup>
+              </div>
+              <div class="temp_feel text_right">
+                <span id="feels_like"></span><sup><small>°c</small></sup> feels
+              </div>
+              <div class="temp_min temp_minmax">
+                <span id="temp_min"></span><sup><small>°c</small></sup>
+              </div>
+              <div class="temp_max temp_minmax">
+                <span id="temp_max"></span><sup><small>°c</small></sup>
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
-      </div>
 
-      <!-- PRESSURE -->
-      <div class="info_block">
-        <div class="place_details alignRight">
-          <span id="pressure"></span> hPa / <span id="humidity"></span>%
-        </div>
-        <div class="place_details alignRight" title="visibility">
-          🔭 <span id="visibility"></span> m
-        </div>
-      </div>
 
-    </div>
-  </div>
+        <!-- FORECASTS -->
+        <div class="forecasts" id="forecasts"></div>
 
-  <!-- TEMPERATURES -->
-  <div class="info_block">
-
-    <div class="temperature_grid alignCenter">
-      <div class="temp_current">
-        <span id="temp"></span><sup><small>°c</small></sup>
-      </div>
-      <div class="temp_feel text_right">
-        <span id="feels_like"></span><sup><small>°c</small></sup> feels
-      </div>
-      <div class="temp_min temp_minmax">
-        <span id="temp_min"></span><sup><small>°c</small></sup>
-      </div>
-      <div class="temp_max temp_minmax">
-        <span id="temp_max"></span><sup><small>°c</small></sup>
       </div>
     </div>
 
-  </div>
 
-  <!-- WIND -->
-  <div class="info_block">
-    <div class="wind">
-      <div class="windir" id="windir">➤</div>
-      <small><span id="deg"></span>°@<span id="speed"></span> kt</small>
-    </div>
-  </div>
-
-  <!-- CLOUDS -->
-  <div class="info_block">
-    <div class="flex_col">
-      <img class="icon_current_weather" id="icon" />
-      <div class="weather_current_description" id="description"> </div>
-    </div>
-  </div>
-
-  <!-- FORECASTS -->
-  <div class="forecasts" id="forecasts"></div>
-
-
-  <div class="flex_col">
     <p>
       Weather App by Nicolas Guinet.<br>
       Weather data: <a target="_blank" href="https://api.openweathermap.org">openweathermap.org</a>
